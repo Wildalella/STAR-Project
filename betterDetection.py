@@ -9,75 +9,7 @@ import math  # For math.pi and math.sqrt
 # --- Configuration Parameters ---
 IMAGE_PATH = 'image.png'
 
-# Scale bar properties
-SCALE_BAR_MM = 2.0
-# IMPORTANT: Re-adjust these coordinates if they were changed for a different image version
-SCALE_BAR_ROI_COORDS = (315, 330, 945, 1150)  # (y_start, y_end, x_start, x_end)
 
-# --- Purple Color Range in HSV ---
-LOWER_PURPLE_HSV = np.array([125, 100, 10])
-UPPER_PURPLE_HSV = np.array([160, 255, 255])
-
-
-
-# Morphological operation parameters
-MORPH_KERNEL_SIZE = (3, 3)
-EROSION_ITERATIONS = 1
-DILATION_ITERATIONS = 1
-
-# Dot filtering parameters
-MIN_DOT_AREA_PX = 10
-MAX_DOT_AREA_PX = 1000
-
-# Histogram parameters
-HIST_MIN_MM = 0.1
-HIST_MAX_MM = 2.0
-HIST_BIN_WIDTH_MM = 0.1
-
-# Heatmap parameters
-HEATMAP_GRID_CELL_SIZE_MM = 1.0  # Each cell in the heatmap will be 1mm x 1mm
-
-# Output file names
-HISTOGRAM_IMAGE_PATH = 'dots_distance_histogram.png'
-CSV_OUTPUT_PATH = 'histogram_data.csv'
-DOT_SIZE_DISTRIBUTION_IMAGE_PATH = 'dot_sizes_distribution_microns.png'
-DOT_DIAMETER_DISTRIBUTION_IMAGE_PATH = 'dot_diameters_distribution_microns.png'  # Updated plot filename
-DOT_DENSITY_HEATMAP_IMAGE_PATH = 'dot_density_heatmap.png'
-
-# Visualization parameters for detected dots
-SHOW_DETECTED_DOTS_IMAGE = True
-DOT_CIRCLE_RADIUS = 5
-DOT_CIRCLE_COLOR = (0, 255, 0)  # Green in BGR
-DOT_CIRCLE_THICKNESS = 1
-
-
-# --- Helper Functions ---
-def calibrate_scale(image, roi_coords, known_length_mm):
-    y_start, y_end, x_start, x_end = roi_coords
-    if not (0 <= y_start < y_end <= image.shape[0] and \
-            0 <= x_start < x_end <= image.shape[1]):
-        print(f"Error: Scale bar ROI coordinates {roi_coords} are out of image bounds {image.shape[:2]}.")
-        return None
-    roi = image[y_start:y_end, x_start:x_end]
-    if roi.size == 0:
-        print("Error: Scale bar ROI is empty. Check coordinates.")
-        return None
-    gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-    _, thresh_roi = cv2.threshold(gray_roi, 50, 255, cv2.THRESH_BINARY_INV)
-    contours, _ = cv2.findContours(thresh_roi, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if not contours:
-        print("Error: No contours found in scale bar ROI. Adjust ROI or threshold.")
-        return None
-    scale_bar_contour = max(contours, key=cv2.contourArea)
-    x_bar, y_bar, w_bar, h_bar = cv2.boundingRect(scale_bar_contour)
-    scale_bar_pixel_length = w_bar
-    if scale_bar_pixel_length == 0:
-        print("Error: Detected scale bar has zero pixel length.")
-        return None
-    pixels_per_mm = scale_bar_pixel_length / known_length_mm
-    print(f"Scale bar detected: {scale_bar_pixel_length} pixels = {known_length_mm} mm")
-    print(f"Calibration: {pixels_per_mm:.2f} pixels/mm")
-    return pixels_per_mm
 
 
 def detect_dots_hsv(image, lower_hsv, upper_hsv, min_area, max_area):
