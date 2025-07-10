@@ -15,19 +15,22 @@ SCALE_BAR_MM = 2.0
 SCALE_BAR_ROI_COORDS = (315, 330, 945, 1150)  # (y_start, y_end, x_start, x_end)
 
 # --- Purple Color Range in HSV ---
+#LOWER_PURPLE_HSV = np.array([125, 100, 10])
+#UPPER_PURPLE_HSV = np.array([160, 255, 255])
+# --- Purple Color Range in HSV ---
 LOWER_PURPLE_HSV = np.array([125, 100, 10])
-UPPER_PURPLE_HSV = np.array([160, 255, 255])
+UPPER_PURPLE_HSV = np.array([165, 225, 255])
 
 
 
 # Morphological operation parameters
 MORPH_KERNEL_SIZE = (3, 3)
-EROSION_ITERATIONS = 1
-DILATION_ITERATIONS = 1
+EROSION_ITERATIONS = 1 #1 
+DILATION_ITERATIONS = 1 #1
 
 # Dot filtering parameters
-MIN_DOT_AREA_PX = 10
-MAX_DOT_AREA_PX = 1000
+MIN_DOT_AREA_PX = 5 # 10
+MAX_DOT_AREA_PX = 3000 #changed 1000
 
 # Histogram parameters
 HIST_MIN_MM = 0.1
@@ -52,6 +55,21 @@ DOT_CIRCLE_THICKNESS = 1
 
 
 # --- Helper Functions ---
+
+def create_hsv_trackbars(window_name='HSV Trackbars'):
+    cv2.namedWindow(window_name)
+
+    # Hue ranges from 0–179 in OpenCV
+    cv2.createTrackbar('H Low', window_name, 125, 179, lambda x: None)
+    cv2.createTrackbar('H High', window_name, 165, 179, lambda x: None)
+
+    # Saturation & Value: 0–255
+    cv2.createTrackbar('S Low', window_name, 50, 255, lambda x: None)
+    cv2.createTrackbar('S High', window_name, 225, 255, lambda x: None)
+
+    cv2.createTrackbar('V Low', window_name, 50, 255, lambda x: None)
+    cv2.createTrackbar('V High', window_name, 255, 255, lambda x: None)
+
 def calibrate_scale(image, roi_coords, known_length_mm):
     y_start, y_end, x_start, x_end = roi_coords
     if not (0 <= y_start < y_end <= image.shape[0] and \
