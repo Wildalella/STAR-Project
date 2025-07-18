@@ -17,6 +17,7 @@ hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
 
 # create window
 cv.namedWindow('Trackbars')
+#lh 0, ls 0, lv 0. uh 179, us 90, uv 255
 
 # create trackbars for lower and upper HSV
 cv.createTrackbar('LH', 'Trackbars', 0, 179, nothing)
