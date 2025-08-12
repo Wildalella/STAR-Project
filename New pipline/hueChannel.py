@@ -11,7 +11,7 @@ out = cv2.cvtColor(im_resize, cv2.COLOR_BGR2HSV)
 #putting hue and saturation channels next to each other
 stacked = np.hstack([out[...,0], out[...,1]])
 
-#define thresholds for hue and saturation. Hue > 100 strong color, Saturation < 32(less colo intensity)
+#define thresholds for hue and saturation. Hue > 100 strong color, Saturation < 32(less color intensity)
 hue_thresh = 100
 saturation_thresh = 32
 
